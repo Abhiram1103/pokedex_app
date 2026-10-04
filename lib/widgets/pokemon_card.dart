@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
+import '../providers/favorites_provider.dart';
 import '../models/pokemon.dart';
 
 class PokemonCard extends StatelessWidget {
@@ -71,13 +72,22 @@ class PokemonCard extends StatelessWidget {
                   ],
                 ),
               ),
-              IconButton(
-                onPressed: () {
-                  // Favorites will be connected here later.
+              Consumer<FavoritesProvider>(
+                builder: (context, favorites, child) {
+                  final isFavorite =
+                    favorites.isFavorite(pokemon.id);
+
+                  return IconButton(
+                    onPressed: () {
+                      favorites.toggleFavorite(pokemon);
+                    },
+                    icon: Icon(
+                      isFavorite
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                    ),
+                  );
                 },
-                icon: const Icon(
-                  Icons.favorite_border,
-                ),
               ),
             ],
           ),

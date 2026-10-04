@@ -3,11 +3,19 @@ import 'package:provider/provider.dart';
 import 'widgets/pokemon_card.dart';
 import 'providers/pokemon_provider.dart';
 import 'screens/pokemon_detail_screen.dart';
+import 'providers/favorites_provider.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => PokemonProvider()..fetchPokemon(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => PokemonProvider()..fetchPokemon(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => FavoritesProvider(),
+        ),
+      ],
       child: const PokedexApp(),
     ),
   );

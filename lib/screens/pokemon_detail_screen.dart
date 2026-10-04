@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../providers/favorites_provider.dart';
 import '../models/pokemon.dart';
 import '../models/pokemon_detail.dart';
 import '../services/pokemon_api.dart';
@@ -61,12 +63,31 @@ class _PokemonDetailScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          _capitalize(widget.pokemon.name),
-        ),
+      title: Text(
+      _capitalize(widget.pokemon.name),
+    ),
+    actions: [
+      Consumer<FavoritesProvider>(
+        builder: (context, favorites, child) {
+          final isFavorite =
+              favorites.isFavorite(widget.pokemon.id);
+
+          return IconButton(
+            onPressed: () {
+              favorites.toggleFavorite(widget.pokemon);
+            },
+            icon: Icon(
+              isFavorite
+                  ? Icons.favorite
+                  : Icons.favorite_border,
+            ),
+          );
+        },
       ),
-      body: _buildBody(),
-    );
+    ],
+  ),
+  body: _buildBody(),
+);
   }
 
   Widget _buildBody() {
