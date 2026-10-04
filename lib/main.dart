@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'widgets/pokemon_card.dart';
 import 'providers/pokemon_provider.dart';
+import 'screens/pokemon_detail_screen.dart';
 
 void main() {
   runApp(
@@ -87,6 +88,16 @@ class PokemonListScreen extends StatelessWidget {
 
             return PokemonCard(
               pokemon: pokemon,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PokemonDetailScreen(
+                      pokemon: pokemon,
+                    ),
+                  ),
+                );
+              },
             );
           },
         ),
