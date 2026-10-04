@@ -4,6 +4,7 @@ import 'widgets/pokemon_card.dart';
 import 'providers/pokemon_provider.dart';
 import 'screens/pokemon_detail_screen.dart';
 import 'providers/favorites_provider.dart';
+import 'screens/favorites_screen.dart';
 
 void main() {
   runApp(
@@ -35,11 +36,50 @@ class PokedexApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const PokemonListScreen(),
+      home: const HomeScreen(),
     );
   }
 }
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _currentIndex = 0;
+
+  final List<Widget> _screens = const [
+    PokemonListScreen(),
+    FavoritesScreen(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _screens[_currentIndex],
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _currentIndex,
+        onDestinationSelected: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.catching_pokemon),
+            label: 'Pokémon',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.favorite),
+            label: 'Favorites',
+          ),
+        ],
+      ),
+    );
+  }
+}
 class PokemonListScreen extends StatelessWidget {
   const PokemonListScreen({super.key});
 
