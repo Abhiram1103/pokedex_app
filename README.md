@@ -1,17 +1,59 @@
-# pokedex_app
+# Pokédex Flutter App
 
-A new Flutter project.
+A Flutter Pokédex app built as a take-home assignment for Aptcoders.
 
-## Getting Started
+The app uses the PokéAPI to display Pokémon, supports pagination and search,
+provides detailed Pokémon information, and allows users to manage persistent
+local favorites.
 
-This project is a starting point for a Flutter application.
+## Features
 
-A few resources to get you started if this is your first Flutter project:
+- Browse Pokémon from PokéAPI
+- Paginated loading using the API's `next` URL
+- Search currently loaded Pokémon by name or ID
+- Pokémon detail screen
+- Official Pokémon artwork
+- Pokémon types with type-specific colors
+- Height and weight information
+- Abilities
+- Base stats with progress indicators
+- Add/remove favorites from the list and detail screens
+- Dedicated Favorites screen
+- Favorites synchronized across screens
+- Favorites persisted locally between app launches
+- Loading, error, and empty states
+- Portrait-only orientation
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## Tech Stack
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Flutter
+- Dart
+- Provider
+- HTTP
+- Shared Preferences
+- PokéAPI
+
+## Architecture
+
+The project is organized into models, services, providers, screens,
+and reusable widgets.
+
+```text
+lib/
+├── main.dart
+├── models/
+│   ├── pokemon.dart
+│   └── pokemon_detail.dart
+├── providers/
+│   ├── favorites_provider.dart
+│   └── pokemon_provider.dart
+├── screens/
+│   ├── favorites_screen.dart
+│   └── pokemon_detail_screen.dart
+├── services/
+│   └── pokemon_api.dart
+├── theme/
+│   └── app_theme.dart
+└── widgets/
+    ├── pokemon_card.dart
+    └── pokemon_search_bar.dart
