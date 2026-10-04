@@ -5,6 +5,7 @@ import 'providers/pokemon_provider.dart';
 import 'screens/pokemon_detail_screen.dart';
 import 'providers/favorites_provider.dart';
 import 'screens/favorites_screen.dart';
+import 'widgets/pokemon_search_bar.dart';
 
 void main() {
   runApp(
@@ -107,12 +108,18 @@ class PokemonListScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Pokédex'),
       ),
-      body: NotificationListener<ScrollNotification>(
+      body: Column(
+  children: [
+    const PokemonSearchBar(),
+
+    Expanded(
+      child: NotificationListener<ScrollNotification>(
         onNotification: (notification) {
           if (notification is ScrollUpdateNotification) {
             final metrics = notification.metrics;
 
-            if (metrics.pixels >= metrics.maxScrollExtent - 200) {
+            if (metrics.pixels >=
+                metrics.maxScrollExtent - 200) {
               provider.fetchPokemon();
             }
           }
@@ -120,10 +127,16 @@ class PokemonListScreen extends StatelessWidget {
           return false;
         },
         child: ListView.builder(
-          itemCount:
-              provider.pokemon.length + (provider.hasMore ? 1 : 0),
+          itemCount: provider.filteredPokemon.length +
+              (provider.hasMore &&
+                      provider.searchQuery.isEmpty
+                  ? 1
+                  : 0),
           itemBuilder: (context, index) {
-            if (index == provider.pokemon.length) {
+            final filteredPokemon =
+                provider.filteredPokemon;
+
+            if (index == filteredPokemon.length) {
               return const Padding(
                 padding: EdgeInsets.all(16),
                 child: Center(
@@ -132,7 +145,7 @@ class PokemonListScreen extends StatelessWidget {
               );
             }
 
-            final pokemon = provider.pokemon[index];
+            final pokemon = filteredPokemon[index];
 
             return PokemonCard(
               pokemon: pokemon,
@@ -140,7 +153,8 @@ class PokemonListScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => PokemonDetailScreen(
+                    builder: (_) =>
+                        PokemonDetailScreen(
                       pokemon: pokemon,
                     ),
                   ),
@@ -150,6 +164,9 @@ class PokemonListScreen extends StatelessWidget {
           },
         ),
       ),
+    ),
+  ],
+),
     );
   }
 }

@@ -11,11 +11,32 @@ class PokemonProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool _hasMore = true;
   String? _errorMessage;
+  String _searchQuery = '';
 
   List<Pokemon> get pokemon => List.unmodifiable(_pokemon);
+
+  List<Pokemon> get filteredPokemon {
+    if (_searchQuery.trim().isEmpty) {
+      return pokemon;
+    }
+
+    final query = _searchQuery.trim().toLowerCase();
+
+    return _pokemon.where((pokemon) {
+      return pokemon.name.toLowerCase().contains(query) ||
+          pokemon.id.toString().contains(query);
+    }).toList();
+  }
+
   bool get isLoading => _isLoading;
   bool get hasMore => _hasMore;
   String? get errorMessage => _errorMessage;
+  String get searchQuery => _searchQuery;
+
+  void setSearchQuery(String query) {
+    _searchQuery = query;
+    notifyListeners();
+  }
 
   Future<void> fetchPokemon() async {
     if (_isLoading || !_hasMore) {
