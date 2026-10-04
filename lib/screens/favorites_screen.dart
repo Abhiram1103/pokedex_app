@@ -14,23 +14,14 @@ class FavoritesScreen extends StatelessWidget {
     final favorites = context.watch<FavoritesProvider>();
     final pokemonProvider = context.watch<PokemonProvider>();
 
-    final favoritePokemon =
-        favorites.getFavorites(pokemonProvider.pokemon);
+    final favoritePokemon = favorites.getFavorites(pokemonProvider.pokemon);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Favorites'),
-      ),
+      appBar: AppBar(title: const Text('Favorites')),
       body: favoritePokemon.isEmpty
-          ? const Center(
-              child: Text(
-                'No favorite Pokémon yet.',
-              ),
-            )
+          ? const Center(child: Text('No favorite Pokémon yet.'))
           : ListView.builder(
-              padding: const EdgeInsets.symmetric(
-                vertical: 8,
-              ),
+              padding: const EdgeInsets.symmetric(vertical: 8),
               itemCount: favoritePokemon.length,
               itemBuilder: (context, index) {
                 final pokemon = favoritePokemon[index];
@@ -41,10 +32,7 @@ class FavoritesScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) =>
-                            PokemonDetailScreen(
-                          pokemon: pokemon,
-                        ),
+                        builder: (_) => PokemonDetailScreen(pokemon: pokemon),
                       ),
                     );
                   },

@@ -31,9 +31,7 @@ class PokemonSearchBar extends StatelessWidget {
               );
             },
           ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
         ),
       ),
     );

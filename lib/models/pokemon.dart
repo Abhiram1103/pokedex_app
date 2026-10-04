@@ -3,18 +3,12 @@ class Pokemon {
   final String name;
   final String imageUrl;
 
-  const Pokemon({
-    required this.id,
-    required this.name,
-    required this.imageUrl,
-  });
+  const Pokemon({required this.id, required this.name, required this.imageUrl});
 
   factory Pokemon.fromApiResponse(Map<String, dynamic> json) {
     final url = json['url'] as String;
 
-    final id = int.parse(
-      url.split('/').where((part) => part.isNotEmpty).last,
-    );
+    final id = int.parse(url.split('/').where((part) => part.isNotEmpty).last);
 
     return Pokemon(
       id: id,

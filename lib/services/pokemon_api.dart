@@ -9,23 +9,14 @@ class PokemonPage {
   final List<Pokemon> pokemon;
   final String? nextUrl;
 
-  const PokemonPage({
-    required this.pokemon,
-    required this.nextUrl,
-  });
+  const PokemonPage({required this.pokemon, required this.nextUrl});
 }
 
 class PokemonApi {
-  static const String _baseUrl =
-      'https://pokeapi.co/api/v2';
+  static const String _baseUrl = 'https://pokeapi.co/api/v2';
 
-  Future<PokemonPage> fetchPokemon({
-    int limit = 20,
-    int offset = 0,
-  }) async {
-    final uri = Uri.parse(
-      '$_baseUrl/pokemon?limit=$limit&offset=$offset',
-    );
+  Future<PokemonPage> fetchPokemon({int limit = 20, int offset = 0}) async {
+    final uri = Uri.parse('$_baseUrl/pokemon?limit=$limit&offset=$offset');
 
     final response = await http.get(uri);
 
@@ -36,31 +27,19 @@ class PokemonApi {
       );
     }
 
-    final data =
-        jsonDecode(response.body) as Map<String, dynamic>;
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
 
     final results = data['results'] as List<dynamic>;
 
     final pokemon = results
-        .map(
-          (item) => Pokemon.fromApiResponse(
-            item as Map<String, dynamic>,
-          ),
-        )
+        .map((item) => Pokemon.fromApiResponse(item as Map<String, dynamic>))
         .toList();
 
-    return PokemonPage(
-      pokemon: pokemon,
-      nextUrl: data['next'] as String?,
-    );
+    return PokemonPage(pokemon: pokemon, nextUrl: data['next'] as String?);
   }
 
-  Future<PokemonDetail> fetchPokemonDetail(
-    String name,
-  ) async {
-    final uri = Uri.parse(
-      '$_baseUrl/pokemon/$name',
-    );
+  Future<PokemonDetail> fetchPokemonDetail(String name) async {
+    final uri = Uri.parse('$_baseUrl/pokemon/$name');
 
     final response = await http.get(uri);
 
@@ -71,8 +50,7 @@ class PokemonApi {
       );
     }
 
-    final data =
-        jsonDecode(response.body) as Map<String, dynamic>;
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
 
     return PokemonDetail.fromApiResponse(data);
   }

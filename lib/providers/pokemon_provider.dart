@@ -48,10 +48,7 @@ class PokemonProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final page = await _api.fetchPokemon(
-        limit: 20,
-        offset: _pokemon.length,
-      );
+      final page = await _api.fetchPokemon(limit: 20, offset: _pokemon.length);
 
       _pokemon.addAll(page.pokemon);
 

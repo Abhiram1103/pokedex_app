@@ -9,18 +9,13 @@ import '../services/pokemon_api.dart';
 class PokemonDetailScreen extends StatefulWidget {
   final Pokemon pokemon;
 
-  const PokemonDetailScreen({
-    super.key,
-    required this.pokemon,
-  });
+  const PokemonDetailScreen({super.key, required this.pokemon});
 
   @override
-  State<PokemonDetailScreen> createState() =>
-      _PokemonDetailScreenState();
+  State<PokemonDetailScreen> createState() => _PokemonDetailScreenState();
 }
 
-class _PokemonDetailScreenState
-    extends State<PokemonDetailScreen> {
+class _PokemonDetailScreenState extends State<PokemonDetailScreen> {
   final PokemonApi _api = PokemonApi();
 
   PokemonDetail? _pokemonDetail;
@@ -35,9 +30,7 @@ class _PokemonDetailScreenState
 
   Future<void> _loadPokemonDetail() async {
     try {
-      final detail = await _api.fetchPokemonDetail(
-        widget.pokemon.name,
-      );
+      final detail = await _api.fetchPokemonDetail(widget.pokemon.name);
 
       if (!mounted) {
         return;
@@ -63,48 +56,36 @@ class _PokemonDetailScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-      title: Text(
-      _capitalize(widget.pokemon.name),
-    ),
-    actions: [
-      Consumer<FavoritesProvider>(
-        builder: (context, favorites, child) {
-          final isFavorite =
-              favorites.isFavorite(widget.pokemon.id);
+        title: Text(_capitalize(widget.pokemon.name)),
+        actions: [
+          Consumer<FavoritesProvider>(
+            builder: (context, favorites, child) {
+              final isFavorite = favorites.isFavorite(widget.pokemon.id);
 
-          return IconButton(
-            onPressed: () {
-              favorites.toggleFavorite(widget.pokemon);
+              return IconButton(
+                onPressed: () {
+                  favorites.toggleFavorite(widget.pokemon);
+                },
+                icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
+              );
             },
-            icon: Icon(
-              isFavorite
-                  ? Icons.favorite
-                  : Icons.favorite_border,
-            ),
-          );
-        },
+          ),
+        ],
       ),
-    ],
-  ),
-  body: _buildBody(),
-);
+      body: _buildBody(),
+    );
   }
 
   Widget _buildBody() {
     if (_isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (_errorMessage != null) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
-          child: Text(
-            _errorMessage!,
-            textAlign: TextAlign.center,
-          ),
+          child: Text(_errorMessage!, textAlign: TextAlign.center),
         ),
       );
     }
@@ -112,50 +93,58 @@ class _PokemonDetailScreenState
     final pokemon = _pokemonDetail;
 
     if (pokemon == null) {
-      return const Center(
-        child: Text('No Pokémon details available.'),
-      );
+      return const Center(child: Text('No Pokémon details available.'));
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(
-            child: Image.network(
-              pokemon.imageUrl,
-              height: 250,
-              width: 250,
-              fit: BoxFit.contain,
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(28),
             ),
-          ),
+            child: Column(
+              children: [
+                Image.network(
+                  pokemon.imageUrl,
+                  height: 240,
+                  width: 240,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const SizedBox(
+                      height: 240,
+                      child: Icon(
+                        Icons.image_not_supported_outlined,
+                        size: 60,
+                        color: Colors.grey,
+                      ),
+                    );
+                  },
+                ),
 
-          const SizedBox(height: 16),
+                const SizedBox(height: 8),
 
-          Center(
-            child: Text(
-              '#${pokemon.id.toString().padLeft(3, '0')}',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(
-                    color: Colors.grey,
+                Text(
+                  '#${pokemon.id.toString().padLeft(3, '0')}',
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Colors.grey.shade500,
+                    fontWeight: FontWeight.w600,
                   ),
-            ),
-          ),
+                ),
 
-          const SizedBox(height: 4),
+                const SizedBox(height: 4),
 
-          Center(
-            child: Text(
-              _capitalize(pokemon.name),
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineMedium
-                  ?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                Text(
+                  _capitalize(pokemon.name),
+                  style: Theme.of(context).textTheme.headlineMedium
+                      ?.copyWith(fontWeight: FontWeight.w800),
+                ),
+              ],
             ),
           ),
 
@@ -173,6 +162,17 @@ class _PokemonDetailScreenState
                   (type) => Chip(
                     label: Text(
                       _capitalize(type),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+
+                    backgroundColor: _typeColor(type),
+                    side: BorderSide.none,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
                     ),
                   ),
                 )
@@ -210,10 +210,37 @@ class _PokemonDetailScreenState
           const SizedBox(height: 8),
 
           ...pokemon.abilities.map(
-            (ability) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Text(
-                '• ${_capitalize(ability)}',
+            (ability) => Container(
+              width: double.infinity,
+              margin: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.grey.shade200),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF1F3F5),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(Icons.auto_awesome, size: 20),
+                  ),
+
+                  const SizedBox(width: 12),
+
+                  Text(
+                    _capitalize(ability),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -224,9 +251,7 @@ class _PokemonDetailScreenState
 
           const SizedBox(height: 12),
 
-          ...pokemon.stats.map(
-            (stat) => _buildStatRow(stat),
-          ),
+          ...pokemon.stats.map((stat) => _buildStatRow(stat)),
         ],
       ),
     );
@@ -235,67 +260,97 @@ class _PokemonDetailScreenState
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: Theme.of(context)
-          .textTheme
-          .titleLarge
-          ?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+      style: Theme.of(context).textTheme.titleLarge
+          ?.copyWith(fontWeight: FontWeight.w800, fontSize: 20),
     );
   }
 
-  Widget _buildInfoCard(
-    String label,
-    String value,
-  ) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Text(
-              label,
-              style: const TextStyle(
-                color: Colors.grey,
-              ),
+  Widget _buildInfoCard(String label, String value) {
+    final IconData icon = label == 'Height'
+        ? Icons.height
+        : Icons.monitor_weight_outlined;
+
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF1F3F5),
+              borderRadius: BorderRadius.circular(12),
             ),
-            const SizedBox(height: 6),
-            Text(
-              value,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+            child: Icon(icon, color: Colors.grey.shade700),
+          ),
+
+          const SizedBox(width: 12),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(color: Colors.grey.shade500, fontSize: 13),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildStatRow(PokemonStat stat) {
+    final progress = (stat.value / 255).clamp(0.0, 1.0);
+
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 16),
       child: Row(
         children: [
           SizedBox(
-            width: 110,
+            width: 90,
             child: Text(
               _formatStatName(stat.name),
+              style: const TextStyle(fontWeight: FontWeight.w600),
             ),
           ),
-          Expanded(
-            child: LinearProgressIndicator(
-              value: stat.value / 255,
-              minHeight: 8,
-            ),
-          ),
+
           const SizedBox(width: 12),
+
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: LinearProgressIndicator(
+                value: progress,
+                minHeight: 10,
+                backgroundColor: Colors.grey.shade200,
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 12),
+
           SizedBox(
             width: 35,
             child: Text(
               stat.value.toString(),
               textAlign: TextAlign.right,
+              style: const TextStyle(fontWeight: FontWeight.w700),
             ),
           ),
         ],
@@ -304,10 +359,50 @@ class _PokemonDetailScreenState
   }
 
   String _formatStatName(String value) {
-    return value
-        .split('-')
-        .map(_capitalize)
-        .join(' ');
+    return value.split('-').map(_capitalize).join(' ');
+  }
+
+  Color _typeColor(String type) {
+    switch (type.toLowerCase()) {
+      case 'normal':
+        return Colors.grey;
+      case 'fire':
+        return Colors.red;
+      case 'water':
+        return Colors.blue;
+      case 'electric':
+        return Colors.amber.shade700;
+      case 'grass':
+        return Colors.green;
+      case 'ice':
+        return Colors.cyan;
+      case 'fighting':
+        return Colors.deepOrange;
+      case 'poison':
+        return Colors.purple;
+      case 'ground':
+        return Colors.brown;
+      case 'flying':
+        return Colors.indigo.shade300;
+      case 'psychic':
+        return Colors.pink;
+      case 'bug':
+        return Colors.lightGreen.shade700;
+      case 'rock':
+        return Colors.brown.shade700;
+      case 'ghost':
+        return Colors.deepPurple;
+      case 'dragon':
+        return Colors.indigo;
+      case 'dark':
+        return Colors.grey.shade800;
+      case 'steel':
+        return Colors.blueGrey;
+      case 'fairy':
+        return Colors.pink.shade300;
+      default:
+        return Colors.grey;
+    }
   }
 
   String _capitalize(String value) {
