@@ -89,7 +89,41 @@ class PokemonListScreen extends StatelessWidget {
     }
 
     if (provider.errorMessage != null && provider.pokemon.isEmpty) {
-      return Scaffold(body: Center(child: Text(provider.errorMessage!)));
+      return Scaffold(
+        appBar: AppBar(title: const Text('Pokédex')),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.cloud_off_outlined,
+                  size: 56,
+                  color: Colors.grey,
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Something went wrong',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  provider.errorMessage!,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.grey),
+                ),
+                const SizedBox(height: 20),
+                FilledButton.icon(
+                  onPressed: provider.fetchPokemon,
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Try again'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
     }
 
     return Scaffold(

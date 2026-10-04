@@ -38,6 +38,29 @@ class PokemonApi {
     return PokemonPage(pokemon: pokemon, nextUrl: data['next'] as String?);
   }
 
+  Future<PokemonPage> fetchPokemonFromUrl(String url) async {
+    final uri = Uri.parse(url);
+
+    final response = await http.get(uri);
+
+    if (response.statusCode != 200) {
+      throw Exception(
+        'Failed to load Pokémon. '
+        'Status code: ${response.statusCode}',
+      );
+    }
+
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
+
+    final results = data['results'] as List<dynamic>;
+
+    final pokemon = results
+        .map((item) => Pokemon.fromApiResponse(item as Map<String, dynamic>))
+        .toList();
+
+    return PokemonPage(pokemon: pokemon, nextUrl: data['next'] as String?);
+  }
+
   Future<PokemonDetail> fetchPokemonDetail(String name) async {
     final uri = Uri.parse('$_baseUrl/pokemon/$name');
 

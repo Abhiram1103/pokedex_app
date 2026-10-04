@@ -12,6 +12,7 @@ class PokemonProvider extends ChangeNotifier {
   bool _hasMore = true;
   String? _errorMessage;
   String _searchQuery = '';
+  String? _nextUrl;
 
   List<Pokemon> get pokemon => List.unmodifiable(_pokemon);
 
@@ -48,10 +49,17 @@ class PokemonProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final page = await _api.fetchPokemon(limit: 20, offset: _pokemon.length);
+      final PokemonPage page;
+
+      if (_nextUrl == null) {
+        page = await _api.fetchPokemon(limit: 20, offset: 0);
+      } else {
+        page = await _api.fetchPokemonFromUrl(_nextUrl!);
+      }
 
       _pokemon.addAll(page.pokemon);
 
+      _nextUrl = page.nextUrl;
       _hasMore = page.nextUrl != null;
     } catch (e) {
       _errorMessage = 'Failed to load Pokémon.';
