@@ -27,17 +27,14 @@ class PokemonProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final newPokemon = await _api.fetchPokemon(
+      final page = await _api.fetchPokemon(
         limit: 20,
         offset: _pokemon.length,
       );
 
-      _pokemon.addAll(newPokemon);
+      _pokemon.addAll(page.pokemon);
 
-      // For now, assume there is more if we received 20.
-      if (newPokemon.length < 20) {
-        _hasMore = false;
-      }
+      _hasMore = page.nextUrl != null;
     } catch (e) {
       _errorMessage = 'Failed to load Pokémon.';
     } finally {

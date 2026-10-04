@@ -4,10 +4,20 @@ import 'package:http/http.dart' as http;
 
 import '../models/pokemon.dart';
 
+class PokemonPage {
+  final List<Pokemon> pokemon;
+  final String? nextUrl;
+
+  const PokemonPage({
+    required this.pokemon,
+    required this.nextUrl,
+  });
+}
+
 class PokemonApi {
   static const String _baseUrl = 'https://pokeapi.co/api/v2';
 
-  Future<List<Pokemon>> fetchPokemon({
+  Future<PokemonPage> fetchPokemon({
     int limit = 20,
     int offset = 0,
   }) async {
@@ -27,11 +37,16 @@ class PokemonApi {
 
     final results = data['results'] as List<dynamic>;
 
-    return results
+    final pokemon = results
         .map(
-          (pokemon) =>
-              Pokemon.fromApiResponse(pokemon as Map<String, dynamic>),
+          (item) =>
+              Pokemon.fromApiResponse(item as Map<String, dynamic>),
         )
         .toList();
+
+    return PokemonPage(
+      pokemon: pokemon,
+      nextUrl: data['next'] as String?,
+    );
   }
 }

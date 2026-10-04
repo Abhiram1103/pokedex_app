@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'widgets/pokemon_card.dart';
 import 'providers/pokemon_provider.dart';
 
 void main() {
@@ -58,23 +58,38 @@ class PokemonListScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Pokédex'),
       ),
-      body: ListView.builder(
-        itemCount: provider.pokemon.length,
-        itemBuilder: (context, index) {
-          final pokemon = provider.pokemon[index];
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (notification) {
+          if (notification is ScrollUpdateNotification) {
+            final metrics = notification.metrics;
 
-          return ListTile(
-            leading: Image.network(
-              pokemon.imageUrl,
-              width: 60,
-              height: 60,
-            ),
-            title: Text(
-              pokemon.name.toUpperCase(),
-            ),
-            subtitle: Text('#${pokemon.id}'),
-          );
+            if (metrics.pixels >= metrics.maxScrollExtent - 200) {
+              provider.fetchPokemon();
+            }
+          }
+
+          return false;
         },
+        child: ListView.builder(
+          itemCount:
+              provider.pokemon.length + (provider.hasMore ? 1 : 0),
+          itemBuilder: (context, index) {
+            if (index == provider.pokemon.length) {
+              return const Padding(
+                padding: EdgeInsets.all(16),
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
+
+            final pokemon = provider.pokemon[index];
+
+            return PokemonCard(
+              pokemon: pokemon,
+            );
+          },
+        ),
       ),
     );
   }
